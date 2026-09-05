@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impulso JS | Aprende JavaScript desde cero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="hero-top">
+      <span class="brand">⚡ Impulso JS</span>
+      <button id="themeButton" class="theme-button">☀️ Cambiar colores</button>
+    </div>
+    <p class="eyebrow">RUTA DE APRENDIZAJE · NIVEL INICIAL</p>
+    <h1>JavaScript<br><em>desde cero.</em></h1>
+    <p class="hero-copy">Lecciones cortas, videos en español, retos prácticos y ejercicios para convertirte en creador de proyectos web.</p>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressText"></span>
+        <span id="progressPercent"></span>
+      </div>
+      <div class="progress-track"><div id="progressBar"></div></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="lessons-panel">
+      <div class="panel-heading">
+        <h2>Tu ruta</h2>
+        <button id="resetButton" class="text-button">Reiniciar</button>
+      </div>
+      <nav id="lessonList" aria-label="Lista de lecciones"></nav>
+
+      <div class="mini-panel">
+        <h3>Plan de estudio</h3>
+        <ul id="studyChecklist"></ul>
+      </div>
+
+      <div class="streak">
+        <span>🔥</span>
+        <p><strong id="streakNumber">0</strong> lecciones terminadas<br><small>¡Cada paso cuenta!</small></p>
+      </div>
+
+      <div class="focus-card">
+        <span>🎯 MISIÓN DE HOY</span>
+        <p id="focusMessage"></p>
+      </div>
+    </aside>
+
+    <article class="lesson-content">
+      <p id="lessonNumber" class="eyebrow"></p>
+      <div class="lesson-heading">
+        <h2 id="lessonTitle"></h2>
+        <span id="lessonEmoji" class="lesson-emoji"></span>
+      </div>
+      <p id="lessonDescription" class="description"></p>
+
+      <div class="tags">
+        <span>🎬 Video en español</span>
+        <span>⌛ <i id="lessonTime"></i></span>
+        <span>🌱 Principiante</span>
+      </div>
+
+      <div class="video-container">
+        <iframe id="lessonVideo" title="Video de la lección" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <p class="video-note">Recomendación: mira el video, toma apuntes y luego intenta resolver el reto sin mirar la solución.</p>
+      <a id="articleResource" class="article-resource" target="_blank" rel="noopener"></a>
+
+      <section class="code-lab">
+        <div class="code-lab-heading"><div><span>LABORATORIO JS</span><h3>Prueba tu código</h3></div><button id="resetCodeButton" class="text-button">Restaurar ejemplo</button></div>
+        <p>Escribe, ejecuta y observa el resultado. Usa <code>console.log()</code> para mostrar mensajes.</p>
+        <textarea id="codeEditor" spellcheck="false" aria-label="Editor de código JavaScript"></textarea>
+        <div class="code-toolbar"><button id="runCodeButton" class="run-code-button">▶ Ejecutar código</button><span>Se ejecuta en un entorno aislado</span></div>
+        <pre id="codeOutput" class="code-output" aria-live="polite">La consola aparecerá aquí.</pre>
+        <iframe id="codeSandbox" sandbox="allow-scripts" hidden title="Entorno aislado para ejecutar JavaScript"></iframe>
+      </section>
+
+      <section class="challenge">
+        <span>RETO PRÁCTICO</span>
+        <h3 id="challengeTitle"></h3>
+        <p id="challengeText"></p>
+      </section>
+
+      <section class="quiz">
+        <span>MINI QUIZ</span>
+        <h3 id="quizQuestion"></h3>
+        <div id="quizOptions" class="quiz-options"></div>
+        <p id="quizFeedback" class="quiz-feedback" aria-live="polite"></p>
+      </section>
+
+      <section class="lesson-extra">
+        <div class="info-card">
+          <span>OBJETIVO</span>
+          <h3 id="lessonObjective"></h3>
+          <ul id="lessonChecklist" class="checklist"></ul>
+        </div>
+
+        <div class="info-card">
+          <span>SUGERENCIAS</span>
+          <ul id="lessonSuggestions" class="checklist"></ul>
+        </div>
+      </section>
+
+      <div class="lesson-actions">
+        <button id="previousButton" class="secondary-button">← Anterior</button>
+        <button id="completeButton" class="complete-button">Marcar como completada ✓</button>
+        <button id="nextButton" class="secondary-button">Siguiente →</button>
+      </div>
+    </article>
+  </main>
+
+  <div id="celebration" class="celebration">
+    <span>🏆</span>
+    <div>
+      <strong>¡Ruta completada!</strong>
+      <p>Ya avanzaste por la base de JavaScript y puedes pasar al siguiente nivel con proyectos reales.</p>
+    </div>
+  </div>
+
+  <footer>Hecho para aprender creando · Tu progreso se guarda en este navegador.</footer>
+  <script src="app.js"></script>
+</body>
+</html>
