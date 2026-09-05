@@ -241,9 +241,36 @@ const codeExamples = [
   "const tareas = [];\n\nfunction agregarTarea(nombre) {\n  tareas.push(nombre);\n  console.log('Tarea agregada:', nombre);\n}\n\nfunction mostrarTareas() {\n  return tareas;\n}\n\nagregarTarea('Estudiar JavaScript');\nagregarTarea('Practicar el reto');\nconsole.log('Tus tareas:', mostrarTareas());"
 ];
 
-let currentLesson = 0;
-let completed = JSON.parse(localStorage.getItem("guia-js-completadas")) || [];
 const $ = selector => document.querySelector(selector);
+let currentLesson = Math.min(
+  Math.max(parseInt(localStorage.getItem("guia-js-leccion")) || 0, 0),
+  lessons.length - 1
+);
+let completed = JSON.parse(localStorage.getItem("guia-js-completadas")) || [];
+
+function applyTheme(dark) {
+  document.body.classList.toggle("dark", dark);
+  $("#themeButton").innerHTML = dark ? "🌙 Tema oscuro" : "☀️ Tema claro";
+  localStorage.setItem("guia-js-tema", dark ? "dark" : "light");
+}
+
+function confetti(pieces = 70) {
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+  const zone = $("#confettiZone");
+  const colors = ["#6d4aff", "#f7df1e", "#ff8e72", "#78e7be", "#ffdc75", "#8f6bff"];
+  for (let i = 0; i < pieces; i++) {
+    const d = document.createElement("div");
+    d.className = "confetti-piece";
+    d.style.background = colors[i % colors.length];
+    d.style.width = 6 + Math.random() * 6 + "px";
+    d.style.height = 10 + Math.random() * 6 + "px";
+    d.style.setProperty("--x", Math.random() * 100 + "vw");
+    d.style.setProperty("--ex", Math.random() * 100 + "vw");
+    d.style.setProperty("--dur", 2.4 + Math.random() * 1.6 + "s");
+    zone.appendChild(d);
+    d.addEventListener("animationend", () => d.remove());
+  }
+}
 
 function renderList() {
   $("#lessonList").innerHTML = lessons
@@ -263,6 +290,7 @@ function renderQuiz(l) {
   $("#quizQuestion").textContent = l.quiz[0];
   $("#quizOptions").innerHTML = l.quiz[1].map((x, i) => `<button class="quiz-option" data-answer="${i}">${x}</button>`).join("");
   $("#quizFeedback").textContent = "";
+  $("#quizFeedback").className = "quiz-feedback";
 }
 
 function renderLesson() {
@@ -307,14 +335,20 @@ function renderLesson() {
   $("#studyChecklist").innerHTML = studyChecklist.map(item => `<li>${item}</li>`).join("");
   $("#codeEditor").value = codeExamples[currentLesson] || "console.log('Estoy practicando JavaScript');";
   $("#codeOutput").textContent = "La consola aparecerá aquí.";
+  $("#codeOutput").classList.remove("has-error");
 
   renderQuiz(l);
 }
 
 function goTo(i) {
   currentLesson = i;
+  localStorage.setItem("guia-js-leccion", String(currentLesson));
   renderList();
   renderLesson();
+  const content = $(".lesson-content");
+  content.classList.remove("fade-in");
+  void content.offsetWidth;
+  content.classList.add("fade-in");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -327,7 +361,8 @@ $("#previousButton").onclick = () => goTo(currentLesson - 1);
 $("#nextButton").onclick = () => goTo(currentLesson + 1);
 
 $("#completeButton").onclick = () => {
-  completed = completed.includes(currentLesson)
+  const wasDone = completed.includes(currentLesson);
+  completed = wasDone
     ? completed.filter(i => i !== currentLesson)
     : [...completed, currentLesson];
 
@@ -335,6 +370,7 @@ $("#completeButton").onclick = () => {
   renderList();
   renderLesson();
 
+  if (!wasDone) confetti(completed.length === lessons.length ? 140 : 50);
   if (completed.length === lessons.length) {
     $("#celebration").classList.add("show");
   }
@@ -347,9 +383,12 @@ $("#quizOptions").addEventListener("click", e => {
   const ok = +b.dataset.answer === lessons[currentLesson].quiz[2];
   document.querySelectorAll(".quiz-option").forEach(x => x.disabled = true);
   b.classList.add(ok ? "correct" : "wrong");
-  $("#quizFeedback").textContent = ok
+  const fb = $("#quizFeedback");
+  fb.className = `quiz-feedback ${ok ? "good" : "bad"}`;
+  fb.textContent = ok
     ? "¡Correcto! Vas muy bien. ✨"
     : "Casi. Revisa el video y vuelve a intentarlo.";
+  if (ok) confetti(45);
 });
 
 $("#resetButton").onclick = () => {
@@ -360,12 +399,14 @@ $("#resetButton").onclick = () => {
   renderLesson();
 };
 
-$("#themeButton").onclick = () => document.body.classList.toggle("sunset");
+applyTheme(localStorage.getItem("guia-js-tema") === "dark");
+$("#themeButton").onclick = () => applyTheme(!document.body.classList.contains("dark"));
 
 function runCode() {
   const code = $("#codeEditor").value;
   const safeCode = code.replace(/<\/script/gi, "<\\/script");
   $("#codeOutput").textContent = "Ejecutando...";
+  $("#codeOutput").classList.remove("has-error");
   $("#codeSandbox").srcdoc = `<!doctype html><body><script>
     const send = (kind, value) => parent.postMessage({ source: 'impulso-js', kind, value }, '*');
     const format = value => { try { return typeof value === 'object' ? JSON.stringify(value) : String(value); } catch { return String(value); } };
